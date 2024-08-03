@@ -21,9 +21,9 @@ const Map = () => {
     // }, []);
 
     const onPointPress = async (event) => {
-        console.log(JSON.stringify(event, null, 2));
-        if(event.features[0]?.coordinates) {
-            setSelectedScooter(event.features[0]?.coordinates);
+        if(event?.coordinates) {
+            // console.log(JSON.stringify(event, null, 2));
+            setSelectedScooter(event?.coordinates);
         }
     }
 
