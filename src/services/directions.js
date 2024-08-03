@@ -1,5 +1,11 @@
-export async function getDirections(){
-    const response = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/-122.083922%2C37.4220936%3B-122.08119%2C37.392199?alternatives=true&annotations=distance%2Cduration&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibWVvZW0yNzEyIiwiYSI6ImNsdjYxaXZ4NzA3czgya3FmbW1mdThoOGMifQ.s2oy36z3YE0XuwjxCyVG2A`);
+import { appInfo } from "../constants/appInfo";
+
+const BASE_URL = 'https://api.mapbox.com/directions/v5/mapbox';
+
+export async function getDirections(from, to){
+    const response = await fetch(`${BASE_URL}/walking/${from[0]},${from[1]};${to[0]}, ${to[1]}?alternatives=true&annotations=distance%2Cduration&geometries=geojson&language=en&overview=full&steps=true&access_token=${appInfo.MAPBOX_ACCESS_TOKEN}`);
     const json = await response.json();
-    console.log(json);
+    // console.log(JSON.stringify(json, null, 2));
+
+    return json;
 }

@@ -13,8 +13,9 @@ Mapbox.setAccessToken(appInfo.MAPBOX_ACCESS_TOKEN || '');
 
 const Map = () => {
     const [currentLocation, setCurrentLocation] = useState({});
+    const [direction, setDirection] = useState(null)
     const points = scooters.map((scooter) => point([scooter.long, scooter.lat]))
-    const derectionCoordinate = routerResponse.routes[0].geometry.coordinates;
+    const derectionCoordinate = direction?.routes[0]?.geometry.coordinates;
 
     useEffect(() => {
         Geolocation.getCurrentPosition(position => {
@@ -22,26 +23,28 @@ const Map = () => {
         })
     }, []);
 
-    const onPointPress = (event) => {
-        getDirections();
+    const onPointPress = async (event) => {
+        // console.log(JSON.stringify(event, null, 2));
+        const newDirection = await getDirections([-122.081190, 37.392199], [event.coordinates.longitude, event.coordinates.latitude]);
+        setDirection(newDirection);
     }
 
     return (
         <MapView style={{ flex: 1 }} styleURL='mapbox://styles/mapbox/outdoors-v12'>
             <Camera
-                // defaultSettings={{ centerCoordinate: [108.997015, 11.5653169] }}
-                // centerCoordinate={[108.997015, 11.5653169]}
-                // animationDuration={0}
-                // zoomLevel={16}
-                // pitch={33}
-                followZoomLevel={12}
-                followUserLocation
+                defaultSettings={{ centerCoordinate: [-122.081190, 37.392199] }}
+                centerCoordinate={[-122.081190, 37.392199]}
+                animationDuration={0}
+                zoomLevel={12}
+                pitch={33}
+                // followZoomLevel={12}
+                // followUserLocation
             />
-            <LocationPuck
+            {/* <LocationPuck
                 puckBearing='heading'
                 puckBearingEnabled
                 pulsing={{ isEnabled: true }}
-            />
+            /> */}
             <ShapeSource
                 id='scooters'
                 cluster
@@ -82,7 +85,7 @@ const Map = () => {
                 />
                 <Images images={{ pin }} />
             </ShapeSource>
-            {derectionCoordinate && (
+            {direction && (
                 <ShapeSource
                     id='routeSource'
                     lineMetrics
