@@ -30,6 +30,8 @@ export default function ScooterProvider({ children }) {
             setSelectedScooter,
             direction,
             derectionCoordinate: direction?.routes[0]?.geometry.coordinates,
+            routeTime: direction?.routes[0]?.duration,
+            routeDistance: direction?.routes[0]?.distance,
         }}
         >
             {children}
