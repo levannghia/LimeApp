@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React from 'react'
-import { Map } from '../../components'
+import { Map, SelectedScooterSheet } from '../../components'
 
 const HomeScreen = () => {
   return (
     <View style={{flex: 1}}>
       <Map/>
+      <SelectedScooterSheet/>
     </View>
   )
 }

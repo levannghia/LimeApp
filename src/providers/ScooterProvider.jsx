@@ -12,10 +12,16 @@ export default function ScooterProvider({ children }) {
     useEffect(() => {
         const fetchDirection = async () => {
             Geolocation.getCurrentPosition(position => {
-                console.log(position);
+                // console.log(position);
+                if (position.coords) {
+                    setCurrentLocation({
+                      lat: position.coords.latitude,
+                      long: position.coords.longitude,
+                    });
+                  }
             })
-
-            const newDirection = await getDirections([-122.081190, 37.392199], [selectedScooter.longitude, selectedScooter.latitude]);
+            // console.log(currentLocation);
+            const newDirection = await getDirections([currentLocation.long, currentLocation.lat], [selectedScooter.longitude, selectedScooter.latitude]);
             setDirection(newDirection);
         }
 
@@ -29,9 +35,9 @@ export default function ScooterProvider({ children }) {
             selectedScooter,
             setSelectedScooter,
             direction,
-            derectionCoordinate: direction?.routes[0]?.geometry.coordinates,
-            routeTime: direction?.routes[0]?.duration,
-            routeDistance: direction?.routes[0]?.distance,
+            derectionCoordinate: direction?.routes?.[0]?.geometry.coordinates,
+            routeTime: direction?.routes?.[0]?.duration,
+            routeDistance: direction?.routes?.[0]?.distance,
         }}
         >
             {children}
