@@ -9,7 +9,7 @@ import ScooterMarkers from './ScooterMarkers'
 Mapbox.setAccessToken(appInfo.MAPBOX_ACCESS_TOKEN || '');
 
 const Map = () => {
-    const { derectionCoordinate, routeTime } = useScooter();
+    const { derectionCoordinate } = useScooter();
 
     return (
         <MapView style={{ flex: 1 }} styleURL='mapbox://styles/mapbox/outdoors-v12'>
