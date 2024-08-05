@@ -5,18 +5,21 @@ import { useScooter } from '../providers/ScooterProvider';
 import scooterImage from '../assets/images/scooter.png';
 import { Button } from './Button';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
 
 const SelectedScooterSheet = () => {
-    const { selectedScooter, distance, duration, setSelectedScooter } = useScooter();
+    const { selectedScooter, distance, duration, setSelectedScooter, isNearBy } = useScooter();
+    const navigation = useNavigation();
     const bottomSheetRef = useRef();
 
     useEffect(() => {
         if (selectedScooter) {
-            bottomSheetRef.current?.expand();
+          bottomSheetRef.current?.expand();
+        } else {
+          bottomSheetRef.current?.close();
         }
-    }, [selectedScooter])
+      }, [selectedScooter]);
 
-    console.log(selectedScooter);
     return (
         <BottomSheet
             ref={bottomSheetRef}
@@ -49,7 +52,7 @@ const SelectedScooterSheet = () => {
                         }}
                         >
                             <Text style={{ color: 'white', fontSize: 20, fontWeight: '600' }}>Lime - S</Text>
-                            <Text style={{ color: 'gray', fontSize: 16 }}>ID-{selectedScooter?.latitude} * Madison Avenue</Text>
+                            <Text style={{ color: 'gray', fontSize: 16 }}>ID-{selectedScooter?.id} * Madison Avenue</Text>
                         </View>
                         <View style={{ gap: 5 }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, alignSelf: 'flex-start' }}>
@@ -66,6 +69,8 @@ const SelectedScooterSheet = () => {
                     <View>
                         <Button
                             title="Start journey"
+                            disabled={isNearBy}
+                            onPress={() => navigation.navigate('Login')}
                         // onPress={() => {
                         //     startRide(selectedScooter.id);
                         //     setSelectedScooter(undefined);

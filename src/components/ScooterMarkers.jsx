@@ -8,13 +8,13 @@ import { useScooter } from '../providers/ScooterProvider'
 const ScooterMarkers = () => {
     const { setSelectedScooter } = useScooter();
 
-    const points = scooters.map((scooter) => point([scooter.long, scooter.lat]));
+    const points = scooters.map((scooter) => point([scooter.long, scooter.lat], { scooter }));
     const onPointPress = async (event) => {
-        if (event?.coordinates) {
-            setSelectedScooter(event?.coordinates);
+        if (event.features[0].properties?.scooter) {
+            setSelectedScooter(event.features[0].properties.scooter);
         }
     }
-    
+
     return (
         <ShapeSource
             id='scooters'
