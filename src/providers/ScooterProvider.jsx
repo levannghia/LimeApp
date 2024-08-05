@@ -8,6 +8,7 @@ export default function ScooterProvider({ children }) {
     const [currentLocation, setCurrentLocation] = useState({});
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
+    const [isNearBy, setIsNearBy] = useState(false);
 
     useEffect(() => {
         const fetchDirection = async () => {
@@ -38,6 +39,7 @@ export default function ScooterProvider({ children }) {
             derectionCoordinate: direction?.routes?.[0]?.geometry.coordinates,
             duration: direction?.routes?.[0]?.duration,
             distance: direction?.routes?.[0]?.distance,
+            isNearBy
         }}
         >
             {children}
