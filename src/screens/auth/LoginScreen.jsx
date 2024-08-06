@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Alert, StyleSheet, View, AppState } from 'react-native'
 import { supabase } from '../../lib/supabase'
 import { Button, Input } from '@rneui/themed'
+import { ContainerComponent } from '../../components'
+import { globalStyles } from '../../styles/globalStyles'
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -47,7 +49,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ContainerComponent isScroll={true} styles={[globalStyles.page, styles.container]}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
@@ -75,7 +77,7 @@ export default function LoginScreen() {
       <View style={styles.verticallySpaced}>
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
-    </View>
+    </ContainerComponent>
   )
 }
 

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Geolocation from '@react-native-community/geolocation'
 import { getDirections } from '../services/directions'
+import { Alert } from "react-native";
 
 const ScooterContext = createContext({});
 
@@ -9,6 +10,8 @@ export default function ScooterProvider({ children }) {
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
     const [isNearBy, setIsNearBy] = useState(false);
+    const [position, setPosition] = useState(null);
+    const [subscriptionId, setSubscriptionId] = useState(null);
 
     // useEffect(() => {
     //     const fetchDirection = async () => {
@@ -68,6 +71,37 @@ export default function ScooterProvider({ children }) {
 
         fetchDirection();
     }, [selectedScooter, currentLocation]);
+
+    useEffect(() => {
+        return () => {
+            clearWatch();
+        };
+    }, []);
+
+    const watchPosition = () => {
+        try {
+            const watchID = Geolocation.watchPosition(
+                (position) => {
+                    console.log('watchPosition', JSON.stringify(position));
+                    setPosition(JSON.stringify(position));
+                },
+                (error) => Alert.alert('WatchPosition Error', JSON.stringify(error)),
+                {
+                    interval: 10000
+                }
+            );
+            setSubscriptionId(watchID);
+        } catch (error) {
+            Alert.alert('WatchPosition Error', JSON.stringify(error));
+        }
+    };
+
+    const clearWatch = () => {
+        subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
+        setSubscriptionId(null);
+        setPosition(null);
+    };
+
 
     return (
         <ScooterContext.Provider value={{
