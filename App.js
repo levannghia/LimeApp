@@ -1,18 +1,21 @@
 import { StatusBar } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react'
-import MainNavigator from './src/navigators/MainNavigator';
 import ScooterProvider from './src/providers/ScooterProvider';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AuthProvider from './src/providers/AuthProvider';
+import AppRouters from './src/navigators/AppRouters';
 
 const App = () => {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <ScooterProvider>
-        <StatusBar translucent barStyle="dark-content" backgroundColor="transparent" />
-        <NavigationContainer>
-          <MainNavigator />
-        </NavigationContainer>
+        <AuthProvider>
+          <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
+          <NavigationContainer>
+            <AppRouters />
+          </NavigationContainer>
+        </AuthProvider>
       </ScooterProvider>
     </GestureHandlerRootView>
   )
