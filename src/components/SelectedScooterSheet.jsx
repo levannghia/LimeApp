@@ -43,8 +43,8 @@ const SelectedScooterSheet = () => {
                             style={{
                                 width: 60,
                                 height: 60,
-                                objectFit: 'contain',
                             }}
+                            resizeMode='contain'
                         />
                         <View style={{
                             flex: 1,
