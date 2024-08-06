@@ -49,7 +49,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <ContainerComponent isScroll={true} styles={[globalStyles.page, styles.container]}>
+    <ContainerComponent styles={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"

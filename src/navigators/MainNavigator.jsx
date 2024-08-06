@@ -1,16 +1,18 @@
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react'
-import { HomeScreen, LoginScreen } from '../screens';
+import { useAuth } from '../providers/AuthProvider';
+import { HomeScreen } from '../screens';
 
 const Stack = createNativeStackNavigator();
 
-const MainNavigator = () => {
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Login" component={LoginScreen}/>
-        </Stack.Navigator>
-    )
-}
+const AppRouters = () => {
+    const { isAuthenticated } = useAuth();
 
-export default MainNavigator
+    return (
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Home" component={HomeScreen} />
+            </Stack.Navigator>
+    );
+};
+
+export default AppRouters;

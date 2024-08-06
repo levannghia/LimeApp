@@ -1,10 +1,9 @@
-import { View, Text, ScrollView, ImageBackground } from 'react-native'
+import { View, Text, ScrollView, ImageBackground, SafeAreaView } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { globalStyles } from '../styles/globalStyles';
 
 const ContainerComponent = ({ isScroll, isImageBackground, children, back, right, styles }) => {
-    const navigation = useNavigation();
 
     const returnContainer = isScroll ? (
         <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>{children}</ScrollView>
@@ -13,9 +12,11 @@ const ContainerComponent = ({ isScroll, isImageBackground, children, back, right
     )
 
     const headerComponent = () => {
-        <View style={[globalStyles.page, styles]}>
-            {returnContainer}
-        </View>
+        return (
+            <View style={[{flex: 1}, globalStyles.page, styles]}>
+                {returnContainer}
+            </View>
+        )
     }
     return isImageBackground ? (
         <ImageBackground

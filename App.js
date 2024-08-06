@@ -12,9 +12,7 @@ const App = () => {
       <ScooterProvider>
         <AuthProvider>
           <StatusBar translucent barStyle="light-content" backgroundColor="transparent" />
-          <NavigationContainer>
-            <AppRouters />
-          </NavigationContainer>
+          <AppRouters />
         </AuthProvider>
       </ScooterProvider>
     </GestureHandlerRootView>
