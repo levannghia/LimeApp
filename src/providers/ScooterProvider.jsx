@@ -2,10 +2,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import Geolocation from '@react-native-community/geolocation'
 import { getDirections } from '../services/directions'
 import { Alert } from "react-native";
+import { supabase } from "../lib/supabase";
 
 const ScooterContext = createContext({});
 
 export default function ScooterProvider({ children }) {
+    const [nearbyScooters, setNearbyScooters] = useState([]);
     const [currentLocation, setCurrentLocation] = useState({});
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
@@ -57,6 +59,30 @@ export default function ScooterProvider({ children }) {
 
         fetchCurrentLocation();
     }, []);
+
+    useEffect(() => {
+        const fetchScooters = async () => {
+            if (currentLocation.lat && currentLocation.long) {
+                const { error, data } = await supabase.rpc('nearby_scooters', {
+                    lat: currentLocation.lat,
+                    long: currentLocation.long,
+                    // max_dist_meters: 2000,
+                });
+
+                if (error) {
+                    console.log(JSON.stringify(error, null, 2));
+                    
+                    Alert.alert('Failed to fetch scooters');
+                    
+                } else {
+                    setNearbyScooters(data);
+                    console.log(JSON.stringify(data, null, 2));
+                }
+            }
+        };
+
+        fetchScooters();
+    }, [currentLocation])
 
     useEffect(() => {
         const fetchDirection = async () => {

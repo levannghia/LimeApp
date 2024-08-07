@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator();
 
 const AppRouters = () => {
     const { isAuthenticated } = useAuth();
-
+    
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
