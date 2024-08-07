@@ -66,23 +66,21 @@ export default function ScooterProvider({ children }) {
                 const { error, data } = await supabase.rpc('nearby_scooters', {
                     lat: currentLocation.lat,
                     long: currentLocation.long,
-                    // max_dist_meters: 2000,
+                    max_dist_meters: 6000,
                 });
-
+    
                 if (error) {
-                    console.log(JSON.stringify(error, null, 2));
-                    
+                    console.log('Error:', JSON.stringify(error, null, 2));
                     Alert.alert('Failed to fetch scooters');
-                    
                 } else {
+                    console.log('Scooters data:', JSON.stringify(data, null, 2));
                     setNearbyScooters(data);
-                    console.log(JSON.stringify(data, null, 2));
                 }
             }
         };
-
+    
         fetchScooters();
-    }, [currentLocation])
+    }, [currentLocation]);
 
     useEffect(() => {
         const fetchDirection = async () => {
