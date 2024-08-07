@@ -8,7 +8,7 @@ const ScooterContext = createContext({});
 
 export default function ScooterProvider({ children }) {
     const [nearbyScooters, setNearbyScooters] = useState([]);
-    const [currentLocation, setCurrentLocation] = useState();
+    const [currentLocation, setCurrentLocation] = useState({});
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
     const [isNearBy, setIsNearBy] = useState(false);
@@ -47,14 +47,17 @@ export default function ScooterProvider({ children }) {
 
     useEffect(() => {
         const fetchCurrentLocation = () => {
-            Geolocation.getCurrentPosition((position) => {
-                if (position.coords) {
-                    setCurrentLocation({
-                        lat: position.coords.latitude,
-                        long: position.coords.longitude,
-                    });
-                }
-            });
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    if (position.coords) {
+                        setCurrentLocation({
+                            lat: position.coords.latitude,
+                            long: position.coords.longitude,
+                        });
+                    }
+                }),
+                (error) => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+                { enableHighAccuracy: true }
         };
 
         fetchCurrentLocation();
@@ -62,13 +65,13 @@ export default function ScooterProvider({ children }) {
 
     useEffect(() => {
         const fetchScooters = async () => {
-            if (currentLocation.lat && currentLocation.long) {
+            if (currentLocation) {
                 const { error, data } = await supabase.rpc('nearby_scooters', {
-                    lat: currentLocation.lat,
-                    long: currentLocation.long,
+                    lat: 37.392199,
+                    long: -122.081190,
                     max_dist_meters: 6000,
                 });
-    
+
                 if (error) {
                     console.log('Error:', JSON.stringify(error, null, 2));
                     Alert.alert('Failed to fetch scooters');
@@ -78,7 +81,7 @@ export default function ScooterProvider({ children }) {
                 }
             }
         };
-    
+
         fetchScooters();
     }, [currentLocation]);
 
@@ -96,35 +99,35 @@ export default function ScooterProvider({ children }) {
         fetchDirection();
     }, [selectedScooter, currentLocation]);
 
-    useEffect(() => {
-        return () => {
-            clearWatch();
-        };
-    }, []);
+    // useEffect(() => {
+    //     return () => {
+    //         clearWatch();
+    //     };
+    // }, []);
 
-    const watchPosition = () => {
-        try {
-            const watchID = Geolocation.watchPosition(
-                (position) => {
-                    console.log('watchPosition', JSON.stringify(position));
-                    setPosition(JSON.stringify(position));
-                },
-                (error) => Alert.alert('WatchPosition Error', JSON.stringify(error)),
-                {
-                    interval: 10000
-                }
-            );
-            setSubscriptionId(watchID);
-        } catch (error) {
-            Alert.alert('WatchPosition Error', JSON.stringify(error));
-        }
-    };
+    // const watchPosition = () => {
+    //     try {
+    //         const watchID = Geolocation.watchPosition(
+    //             (position) => {
+    //                 console.log('watchPosition', JSON.stringify(position));
+    //                 setPosition(JSON.stringify(position));
+    //             },
+    //             (error) => Alert.alert('WatchPosition Error', JSON.stringify(error)),
+    //             {
+    //                 interval: 10000
+    //             }
+    //         );
+    //         setSubscriptionId(watchID);
+    //     } catch (error) {
+    //         Alert.alert('WatchPosition Error', JSON.stringify(error));
+    //     }
+    // };
 
-    const clearWatch = () => {
-        subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
-        setSubscriptionId(null);
-        setPosition(null);
-    };
+    // const clearWatch = () => {
+    //     subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
+    //     setSubscriptionId(null);
+    //     setPosition(null);
+    // };
 
 
     return (
@@ -144,3 +147,35 @@ export default function ScooterProvider({ children }) {
 }
 
 export const useScooter = () => useContext(ScooterContext);
+
+
+// [
+//     {
+//       "id": 1,
+//       "battery": 0,
+//       "lat": 37.392199,
+//       "long": -122.08119,
+//       "dist_meters": 0
+//     },
+//     {
+//       "id": 59,
+//       "battery": 90,
+//       "lat": 37.392199,
+//       "long": -122.08119,
+//       "dist_meters": 0
+//     },
+//     {
+//       "id": 60,
+//       "battery": 85,
+//       "lat": 37.3925,
+//       "long": -122.0815,
+//       "dist_meters": 43.23842477
+//     },
+//     {
+//       "id": 6,
+//       "battery": 0,
+//       "lat": 37.407746,
+//       "long": -122.090115,
+//       "dist_meters": 1897.83968085
+//     }
+//   ]
