@@ -8,7 +8,7 @@ const ScooterContext = createContext({});
 
 export default function ScooterProvider({ children }) {
     const [nearbyScooters, setNearbyScooters] = useState([]);
-    const [currentLocation, setCurrentLocation] = useState({});
+    const [currentLocation, setCurrentLocation] = useState();
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
     const [isNearBy, setIsNearBy] = useState(false);
