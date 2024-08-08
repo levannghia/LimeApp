@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import Geolocation from '@react-native-community/geolocation'
 import { getDirections } from '../services/directions'
 import { Alert } from "react-native";
+import getDistance from '@turf/distance';
+import { point } from '@turf/helpers';
 import { supabase } from "../lib/supabase";
 
 const ScooterContext = createContext({});
@@ -11,9 +13,10 @@ export default function ScooterProvider({ children }) {
     const [currentLocation, setCurrentLocation] = useState({});
     const [selectedScooter, setSelectedScooter] = useState();
     const [direction, setDirection] = useState(null);
-    const [isNearBy, setIsNearBy] = useState(false);
-    const [position, setPosition] = useState(null);
+    const [isNearBy, setIsNearby] = useState(false);
+    // const [position, setPosition] = useState(null);
     const [subscriptionId, setSubscriptionId] = useState(null);
+    
 
     // useEffect(() => {
     //     const fetchDirection = async () => {
@@ -99,35 +102,50 @@ export default function ScooterProvider({ children }) {
         fetchDirection();
     }, [selectedScooter, currentLocation]);
 
-    // useEffect(() => {
-    //     return () => {
-    //         clearWatch();
-    //     };
-    // }, []);
+    useEffect(() => {
+        if (selectedScooter) {
+            watchPosition();
+        }
 
-    // const watchPosition = () => {
-    //     try {
-    //         const watchID = Geolocation.watchPosition(
-    //             (position) => {
-    //                 console.log('watchPosition', JSON.stringify(position));
-    //                 setPosition(JSON.stringify(position));
-    //             },
-    //             (error) => Alert.alert('WatchPosition Error', JSON.stringify(error)),
-    //             {
-    //                 interval: 10000
-    //             }
-    //         );
-    //         setSubscriptionId(watchID);
-    //     } catch (error) {
-    //         Alert.alert('WatchPosition Error', JSON.stringify(error));
-    //     }
-    // };
+        return () => {
+            clearWatch();
+        };
+    }, [selectedScooter]);
 
-    // const clearWatch = () => {
-    //     subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
-    //     setSubscriptionId(null);
-    //     setPosition(null);
-    // };
+    const watchPosition = () => {
+        try {
+            const watchID = Geolocation.watchPosition(
+                (position) => {
+                    
+                    const from = point([position?.coords.longitude, position?.coords.latitude]);
+                    const to = point([selectedScooter.long, selectedScooter.lat]);
+                    const distance = getDistance(from, to, { units: 'meters' });
+
+                    console.log('watchPosition:', distance);
+
+                    if (distance < 100) {
+                        setIsNearby(true);
+                    } else {
+                        setIsNearby(false);
+                    }
+                    // setPosition(JSON.stringify(position));
+                },
+                (error) => Alert.alert('WatchPosition Error', JSON.stringify(error)),
+                {
+                    interval: 10
+                }
+            );
+            setSubscriptionId(watchID);
+        } catch (error) {
+            Alert.alert('WatchPosition Error', JSON.stringify(error));
+        }
+    };
+
+    const clearWatch = () => {
+        subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
+        setSubscriptionId(null);
+        // setPosition(null);
+    };
 
 
     return (
@@ -147,35 +165,3 @@ export default function ScooterProvider({ children }) {
 }
 
 export const useScooter = () => useContext(ScooterContext);
-
-
-// [
-//     {
-//       "id": 1,
-//       "battery": 0,
-//       "lat": 37.392199,
-//       "long": -122.08119,
-//       "dist_meters": 0
-//     },
-//     {
-//       "id": 59,
-//       "battery": 90,
-//       "lat": 37.392199,
-//       "long": -122.08119,
-//       "dist_meters": 0
-//     },
-//     {
-//       "id": 60,
-//       "battery": 85,
-//       "lat": 37.3925,
-//       "long": -122.0815,
-//       "dist_meters": 43.23842477
-//     },
-//     {
-//       "id": 6,
-//       "battery": 0,
-//       "lat": 37.407746,
-//       "long": -122.090115,
-//       "dist_meters": 1897.83968085
-//     }
-//   ]

@@ -1,24 +1,50 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, Alert } from 'react-native'
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useScooter } from '../providers/ScooterProvider';
 import scooterImage from '../assets/images/scooter.png';
 import { Button } from './Button';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../providers/AuthProvider';
+import { supabase } from '../lib/supabase';
 
 const SelectedScooterSheet = () => {
     const { selectedScooter, distance, duration, setSelectedScooter, isNearBy } = useScooter();
+    const { userId } = useAuth();
     const navigation = useNavigation();
     const bottomSheetRef = useRef();
+    const [ride, setRide] = useState(null);
 
     useEffect(() => {
         if (selectedScooter) {
-          bottomSheetRef.current?.expand();
+            bottomSheetRef.current?.expand();
         } else {
-          bottomSheetRef.current?.close();
+            bottomSheetRef.current?.close();
         }
-      }, [selectedScooter]);
+    }, [selectedScooter]);
+
+    const startRide = async (scooterId) => {
+        if (ride) {
+            Alert.alert('Cannot start a new ride while another one is in progress');
+            return;
+        }
+        const { data, error } = await supabase
+            .from('rides')
+            .insert([
+                {
+                    user_id: userId,
+                    scooter_id: scooterId,
+                },
+            ])
+            .select();
+        if (error) {
+            Alert.alert('Failed to start the ride');
+            console.log(error);
+        } else {
+            setRide(data[0]);
+        }
+    };
 
     return (
         <BottomSheet
@@ -69,12 +95,11 @@ const SelectedScooterSheet = () => {
                     <View>
                         <Button
                             title="Start journey"
-                            disabled={isNearBy}
-                            onPress={() => navigation.navigate('Login')}
-                        // onPress={() => {
-                        //     startRide(selectedScooter.id);
-                        //     setSelectedScooter(undefined);
-                        // }}
+                            disabled={!isNearBy}
+                            onPress={() => {
+                                startRide(selectedScooter.id);
+                                setSelectedScooter(undefined);
+                            }}
                         />
                     </View>
                 </BottomSheetView>
